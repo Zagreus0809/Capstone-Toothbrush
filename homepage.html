@@ -51,4 +51,128 @@
     <div>Email: <span id="loggedUserEmail"></span></div>
     <button id="logout">Logout</button>
 </body>
+<body><!-- Add this to homepage.html -->
+    <div class="section-container" id="dentalScanSection">
+        <h2>Dental Scan</h2>
+        <div class="scan-container">
+            <div class="scan-status">
+                <span id="scanStatus">Camera not connected</span>
+                <div class="status-indicator" id="cameraStatus"></div>
+            </div>
+            
+            <div class="scan-preview">
+                <img id="cameraPreview" src="/api/placeholder/400/300" alt="Camera Preview">
+            </div>
+            
+            <div class="scan-controls">
+                <button id="startScan" class="action-button">Start Scan</button>
+                <button id="takePicture" class="action-button" disabled>Capture</button>
+            </div>
+            
+            <div class="scan-results" id="scanResults" style="display: none;">
+                <h3>Scan Results</h3>
+                <div class="result-item">
+                    <span class="result-label">Plaque Coverage:</span>
+                    <span class="result-value" id="plaqueCoverage">0%</span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label">Decay Detected:</span>
+                    <span class="result-value" id="decayDetected">No</span>
+                </div>
+                <div class="result-map">
+                    <img id="resultImage" src="/api/placeholder/400/300" alt="Result Map">
+                </div>
+                <div class="result-history">
+                    <h4>Previous Scans</h4>
+                    <div id="scanHistory"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<body><!-- Add this to homepage.html -->
+    <div class="section-container" id="brushingSection">
+        <h2>Brushing Tracker</h2>
+        <div class="brushing-container">
+            <div class="brushing-status">
+                <span id="brushingStatus">Tracker not connected</span>
+                <div class="status-indicator" id="trackerStatus"></div>
+            </div>
+            
+            <div class="brushing-visualization">
+                <div class="teeth-map">
+                    <div class="teeth-row upper-teeth">
+                        <div id="upperLeft" class="teeth-section">Upper Left</div>
+                        <div id="upperFront" class="teeth-section">Upper Front</div>
+                        <div id="upperRight" class="teeth-section">Upper Right</div>
+                    </div>
+                    <div class="teeth-row lower-teeth">
+                        <div id="lowerLeft" class="teeth-section">Lower Left</div>
+                        <div id="lowerFront" class="teeth-section">Lower Front</div>
+                        <div id="lowerRight" class="teeth-section">Lower Right</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="brushing-controls">
+                <button id="startBrushing" class="action-button">Start Brushing</button>
+                <button id="stopBrushing" class="action-button" disabled>Stop</button>
+                <div class="timer" id="brushingTimer">00:00</div>
+            </div>
+            
+            <div class="brushing-stats">
+                <h3>Coverage Progress</h3>
+                <div class="progress-container">
+                    <div class="progress-item">
+                        <span class="progress-label">Upper Left:</span>
+                        <div class="progress-bar-container">
+                            <div class="progress-bar" id="upperLeftProgress" style="width: 0%"></div>
+                        </div>
+                        <span class="progress-percentage" id="upperLeftPercentage">0%</span>
+                    </div>
+                    <div class="progress-item">
+                        <span class="progress-label">Upper Front:</span>
+                        <div class="progress-bar-container">
+                            <div class="progress-bar" id="upperFrontProgress" style="width: 0%"></div>
+                        </div>
+                        <span class="progress-percentage" id="upperFrontPercentage">0%</span>
+                    </div>
+                    <div class="progress-item">
+                        <span class="progress-label">Upper Right:</span>
+                        <div class="progress-bar-container">
+                            <div class="progress-bar" id="upperRightProgress" style="width: 0%"></div>
+                        </div>
+                        <span class="progress-percentage" id="upperRightPercentage">0%</span>
+                    </div>
+                    <div class="progress-item">
+                        <span class="progress-label">Lower Left:</span>
+                        <div class="progress-bar-container">
+                            <div class="progress-bar" id="lowerLeftProgress" style="width: 0%"></div>
+                        </div>
+                        <span class="progress-percentage" id="lowerLeftPercentage">0%</span>
+                    </div>
+                    <div class="progress-item">
+                        <span class="progress-label">Lower Front:</span>
+                        <div class="progress-bar-container">
+                            <div class="progress-bar" id="lowerFrontProgress" style="width: 0%"></div>
+                        </div>
+                        <span class="progress-percentage" id="lowerFrontPercentage">0%</span>
+                    </div>
+                    <div class="progress-item">
+                        <span class="progress-label">Lower Right:</span>
+                        <div class="progress-bar-container">
+                            <div class="progress-bar" id="lowerRightProgress" style="width: 0%"></div>
+                        </div>
+                        <span class="progress-percentage" id="lowerRightPercentage">0%</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="brushing-history">
+                <h3>Brushing History</h3>
+                <div id="brushingHistory"></div>
+            </div>
+        </div>
+    </div>
+</body>
 </html>
