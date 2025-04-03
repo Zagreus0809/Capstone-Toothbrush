@@ -146,3 +146,196 @@ button:hover{
     animation:fadeOut 7s forwards;
 
 }
+/* Add to style.css */
+.section-container {
+    background: #fff;
+    width: 90%;
+    max-width: 800px;
+    padding: 1.5rem;
+    margin: 30px auto;
+    border-radius: 10px;
+    box-shadow: 0 10px 25px rgba(0,0,1,0.2);
+}
+
+h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+/* Dental Scan Section */
+.scan-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.scan-status {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.status-indicator {
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background-color: #ff4444;
+}
+
+.status-indicator.connected {
+    background-color: #44ff44;
+}
+
+.scan-preview {
+    width: 100%;
+    text-align: center;
+}
+
+.scan-preview img {
+    max-width: 100%;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+}
+
+.scan-controls {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.action-button {
+    background: rgb(125,125,235);
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.3s;
+}
+
+.action-button:hover {
+    background: #07001f;
+}
+
+.action-button:disabled {
+    background: #cccccc;
+    cursor: not-allowed;
+}
+
+.scan-results, .brushing-stats {
+    background: #f9f9f9;
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 20px;
+}
+
+.result-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.result-map {
+    text-align: center;
+    margin: 15px 0;
+}
+
+.result-history, .brushing-history {
+    margin-top: 20px;
+}
+
+/* Brushing Tracker Section */
+.brushing-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.teeth-map {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin: 20px 0;
+}
+
+.teeth-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.teeth-section {
+    flex: 1;
+    text-align: center;
+    padding: 15px 10px;
+    background: #f0f0f0;
+    border-radius: 8px;
+    border: 2px solid #ddd;
+    transition: background 0.3s;
+}
+
+.teeth-section.active {
+    background: #c9d6ff;
+    border-color: rgb(125,125,235);
+}
+
+.teeth-section.completed {
+    background: #d4edda;
+    border-color: #28a745;
+}
+
+.timer {
+    font-size: 2rem;
+    text-align: center;
+    margin: 10px 0;
+    font-weight: bold;
+}
+
+.progress-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.progress-label {
+    width: 100px;
+}
+
+.progress-bar-container {
+    flex: 1;
+    height: 20px;
+    background: #f0f0f0;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 100%;
+    background: rgb(125,125,235);
+    border-radius: 10px;
+    transition: width 0.5s;
+}
+
+.progress-percentage {
+    width: 50px;
+    text-align: right;
+    margin-left: 10px;
+}
+
+#brushingHistory, #scanHistory {
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.history-item {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    display: flex;
+    justify-content: space-between;
+}
+
+.history-item:last-child {
+    border-bottom: none;
+}
