@@ -1,54 +1,62 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-app.js";
-import {getAuth, onAuthStateChanged, signOut} from "https://www.gstatic.com/firebasejs/10.11.1/firebase-auth.js";
-import{getFirestore, getDoc, doc} from "https://www.gstatic.com/firebasejs/10.11.1/firebase-firestore.js"
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
+import { getFirestore, setDoc, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
+import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-analytics.js";
 
+// Firebase configuration
 const firebaseConfig = {
-    //YOUR COPIED FIREBASE PART SHOULD BE HERE
- //WATCH THIS VIDEO TO LEARN WHAT TO PUT HERE   https://youtu.be/_Xczf06n6x0
-  };
- 
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
+    apiKey: "AIzaSyBjQaUXOTiNQq9eYNKEmhsPsjQdISZTuUI",
+    authDomain: "log-in-system-cef9e.firebaseapp.com",
+    projectId: "log-in-system-cef9e",
+    storageBucket: "log-in-system-cef9e.appspot.com",
+    messagingSenderId: "464719173794",
+    appId: "1:464719173794:web:6cca002d79ca12c38cdffb",
+    measurementId: "G-TGMYKPF6NP"
+};
 
-  const auth=getAuth();
-  const db=getFirestore();
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
+const db = getFirestore(app);
+const auth = getAuth(app);
 
-  onAuthStateChanged(auth, (user)=>{
-    const loggedInUserId=localStorage.getItem('loggedInUserId');
-    if(loggedInUserId){
-        console.log(user);
-        const docRef = doc(db, "users", loggedInUserId);
-        getDoc(docRef)
-        .then((docSnap)=>{
-            if(docSnap.exists()){
-                const userData=docSnap.data();
-                document.getElementById('loggedUserFName').innerText=userData.firstName;
-                document.getElementById('loggedUserEmail').innerText=userData.email;
-                document.getElementById('loggedUserLName').innerText=userData.lastName;
+// Check user authentication state
+onAuthStateChanged(auth, async (user) => {
+    const loggedInUserId = localStorage.getItem("loggedInUserId");
 
+    if (loggedInUserId) {
+        console.log("Logged-in user ID found:", loggedInUserId);
+
+        try {
+            const docRef = doc(db, "users", loggedInUserId);
+            const docSnap = await getDoc(docRef);
+
+            if (docSnap.exists()) {
+                const userData = docSnap.data();
+                document.getElementById("loggedUserFName").innerText = userData.firstName;
+                document.getElementById("loggedUserEmail").innerText = userData.email;
+                document.getElementById("loggedUserLName").innerText = userData.lastName;
+            } else {
+                console.log("No document found matching ID");
             }
-            else{
-                console.log("no document found matching id")
-            }
-        })
-        .catch((error)=>{
-            console.log("Error getting document");
-        })
+        } catch (error) {
+            console.error("Error getting document:", error);
+        }
+    } else {
+        console.log("User ID not found in Local Storage");
     }
-    else{
-        console.log("User Id not Found in Local storage")
-    }
-  })
+});
 
-  const logoutButton=document.getElementById('logout');
+// Logout Functionality
+const logoutButton = document.getElementById("logout");
+logoutButton.addEventListener("click", () => {
+    localStorage.removeItem("loggedInUserId");
 
-  logoutButton.addEventListener('click',()=>{
-    localStorage.removeItem('loggedInUserId');
     signOut(auth)
-    .then(()=>{
-        window.location.href='index.html';
-    })
-    .catch((error)=>{
-        console.error('Error Signing out:', error);
-    })
-  })
+        .then(() => {
+            window.location.href = "index.html";
+        })
+        .catch((error) => {
+            console.error("Error Signing out:", error);
+        });
+});
