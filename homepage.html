@@ -3,174 +3,184 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Homepage</title>
-    <style>
-        body{
-            padding:30px;
-            background:linear-gradient(to right, #e2e2e2, #c9d6ff);
-        }
-        h1{
-            text-align:center;
-
-        }
-        button{
-            color:blueviolet;
-            background-color:#c9d6ff;
-            padding:5px;
-            border-radius:5px;
-            font-size:1rem;
-            font-weight:bold;
-            border:none;
-        }
-        button:hover{
-            text-decoration: underline;
-            color:blue;
-        }
-        button, div{
-            margin-left:15%;
-            font-size:20px;
-            padding:10px;
-        }
-        div{
-            font-weight:400;
-            color:rgb(12,11,11);
-
-        }
-        span{
-            font-weight:600;
-            font-size:22px;
-            color:black;
-        }
-    </style>
+    <title>Digital Wallet</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <!-- Add QR Code libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
     <script type="module" src="./homepage.js"></script>
+    <script type="module" src="./wallet.js"></script>
 </head>
 <body>
-    <h1>Welcome to the Homepage</h1>
-    <div>First Name: <span id="loggedUserFName"></span></div>
-    <div>Last Name: <span id="loggedUserLName"></span></div>
-    <div>Email: <span id="loggedUserEmail"></span></div>
-    <button id="logout">Logout</button>
-</body>
-<body><!-- Add this to homepage.html -->
-    <div class="section-container" id="dentalScanSection">
-        <h2>Dental Scan</h2>
-        <div class="scan-container">
-            <div class="scan-status">
-                <span id="scanStatus">Camera not connected</span>
-                <div class="status-indicator" id="cameraStatus"></div>
-            </div>
-            
-            <div class="scan-preview">
-                <img id="cameraPreview" src="/api/placeholder/400/300" alt="Camera Preview">
-            </div>
-            
-            <div class="scan-controls">
-                <button id="startScan" class="action-button">Start Scan</button>
-                <button id="takePicture" class="action-button" disabled>Capture</button>
-            </div>
-            
-            <div class="scan-results" id="scanResults" style="display: none;">
-                <h3>Scan Results</h3>
-                <div class="result-item">
-                    <span class="result-label">Plaque Coverage:</span>
-                    <span class="result-value" id="plaqueCoverage">0%</span>
+    <div class="notification" id="notification" style="display: none;"></div>
+    
+    <header class="wallet-header">
+        <h1>Digital Wallet</h1>
+        <div class="user-info">
+            <span id="loggedUserFName"></span> <span id="loggedUserLName"></span>
+            <button id="logout" class="logout-button"><i class="fas fa-sign-out-alt"></i> Logout</button>
+        </div>
+    </header>
+    
+    <main class="wallet-main">
+        <section class="balance-section">
+            <div class="card balance-card">
+                <div class="card-header">
+                    <h2>Available Balance</h2>
                 </div>
-                <div class="result-item">
-                    <span class="result-label">Decay Detected:</span>
-                    <span class="result-value" id="decayDetected">No</span>
+                <div class="card-body">
+                    <div class="balance-amount" id="balanceDisplay">$0.00</div>
+                    <div class="account-info">
+                        <div class="account-label">Account ID:</div>
+                        <div class="account-value" id="accountId">-</div>
+                    </div>
                 </div>
-                <div class="result-map">
-                    <img id="resultImage" src="/api/placeholder/400/300" alt="Result Map">
+            </div>
+        </section>
+        
+        <section class="actions-section">
+            <div class="card actions-card">
+                <div class="card-header">
+                    <h2>Quick Actions</h2>
                 </div>
-                <div class="result-history">
-                    <h4>Previous Scans</h4>
-                    <div id="scanHistory"></div>
+                <div class="card-body">
+                    <div class="action-buttons">
+                        <button class="action-button" id="generateQRButton">
+                            <i class="fas fa-qrcode"></i>
+                            <span>Receive Money</span>
+                        </button>
+                        <button class="action-button" id="scanQRButton">
+                            <i class="fas fa-camera"></i>
+                            <span>Send with QR</span>
+                        </button>
+                        <button class="action-button" id="sendDirectButton">
+                            <i class="fas fa-paper-plane"></i>
+                            <span>Send Direct</span>
+                        </button>
+                        <button class="action-button" id="depositButton">
+                            <i class="fas fa-plus-circle"></i>
+                            <span>Deposit</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section class="transactions-section">
+            <div class="card transactions-card">
+                <div class="card-header">
+                    <h2>Recent Transactions</h2>
+                </div>
+                <div class="card-body">
+                    <div class="transaction-list" id="transactionHistory">
+                        <p>Loading transactions...</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <!-- QR Code Section -->
+    <div class="modal" id="qrSection" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Your Payment QR Code</h3>
+                <button class="close-button" id="closeQRModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="qrCodeDisplay" class="qr-code-container"></div>
+                <p class="qr-instructions">Scan this QR code to receive payment</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- QR Scanner Section -->
+    <div class="modal" id="qrScannerContainer" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Scan QR Code</h3>
+                <button class="close-button" id="closeScanner">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="qrScanner"></div>
+                <div id="scanResult"></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Payment Form -->
+    <div class="modal" id="paymentFormContainer" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Send Payment</h3>
+                <button class="close-button" id="closePaymentForm">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Recipient:</label>
+                    <div id="recipientName" class="recipient-name">-</div>
+                    <input type="hidden" id="recipient">
+                </div>
+                <div class="form-group">
+                    <label for="amount">Amount:</label>
+                    <div class="amount-input-container">
+                        <span class="currency-symbol">$</span>
+                        <input type="number" id="amount" placeholder="0.00" step="0.01" min="0.01">
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button class="action-button primary" id="sendButton">Send Payment</button>
                 </div>
             </div>
         </div>
     </div>
-</body>
-<body><!-- Add this to homepage.html -->
-    <div class="section-container" id="brushingSection">
-        <h2>Brushing Tracker</h2>
-        <div class="brushing-container">
-            <div class="brushing-status">
-                <span id="brushingStatus">Tracker not connected</span>
-                <div class="status-indicator" id="trackerStatus"></div>
+    
+    <!-- Direct Send Form -->
+    <div class="modal" id="directSendContainer" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Send Direct Payment</h3>
+                <button class="close-button" id="closeDirectSend">&times;</button>
             </div>
-            
-            <div class="brushing-visualization">
-                <div class="teeth-map">
-                    <div class="teeth-row upper-teeth">
-                        <div id="upperLeft" class="teeth-section">Upper Left</div>
-                        <div id="upperFront" class="teeth-section">Upper Front</div>
-                        <div id="upperRight" class="teeth-section">Upper Right</div>
-                    </div>
-                    <div class="teeth-row lower-teeth">
-                        <div id="lowerLeft" class="teeth-section">Lower Left</div>
-                        <div id="lowerFront" class="teeth-section">Lower Front</div>
-                        <div id="lowerRight" class="teeth-section">Lower Right</div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="directRecipient">Recipient ID:</label>
+                    <input type="text" id="directRecipient" placeholder="Enter recipient ID">
+                </div>
+                <div class="form-group">
+                    <label for="directAmount">Amount:</label>
+                    <div class="amount-input-container">
+                        <span class="currency-symbol">$</span>
+                        <input type="number" id="directAmount" placeholder="0.00" step="0.01" min="0.01">
                     </div>
                 </div>
-            </div>
-            
-            <div class="brushing-controls">
-                <button id="startBrushing" class="action-button">Start Brushing</button>
-                <button id="stopBrushing" class="action-button" disabled>Stop</button>
-                <div class="timer" id="brushingTimer">00:00</div>
-            </div>
-            
-            <div class="brushing-stats">
-                <h3>Coverage Progress</h3>
-                <div class="progress-container">
-                    <div class="progress-item">
-                        <span class="progress-label">Upper Left:</span>
-                        <div class="progress-bar-container">
-                            <div class="progress-bar" id="upperLeftProgress" style="width: 0%"></div>
-                        </div>
-                        <span class="progress-percentage" id="upperLeftPercentage">0%</span>
-                    </div>
-                    <div class="progress-item">
-                        <span class="progress-label">Upper Front:</span>
-                        <div class="progress-bar-container">
-                            <div class="progress-bar" id="upperFrontProgress" style="width: 0%"></div>
-                        </div>
-                        <span class="progress-percentage" id="upperFrontPercentage">0%</span>
-                    </div>
-                    <div class="progress-item">
-                        <span class="progress-label">Upper Right:</span>
-                        <div class="progress-bar-container">
-                            <div class="progress-bar" id="upperRightProgress" style="width: 0%"></div>
-                        </div>
-                        <span class="progress-percentage" id="upperRightPercentage">0%</span>
-                    </div>
-                    <div class="progress-item">
-                        <span class="progress-label">Lower Left:</span>
-                        <div class="progress-bar-container">
-                            <div class="progress-bar" id="lowerLeftProgress" style="width: 0%"></div>
-                        </div>
-                        <span class="progress-percentage" id="lowerLeftPercentage">0%</span>
-                    </div>
-                    <div class="progress-item">
-                        <span class="progress-label">Lower Front:</span>
-                        <div class="progress-bar-container">
-                            <div class="progress-bar" id="lowerFrontProgress" style="width: 0%"></div>
-                        </div>
-                        <span class="progress-percentage" id="lowerFrontPercentage">0%</span>
-                    </div>
-                    <div class="progress-item">
-                        <span class="progress-label">Lower Right:</span>
-                        <div class="progress-bar-container">
-                            <div class="progress-bar" id="lowerRightProgress" style="width: 0%"></div>
-                        </div>
-                        <span class="progress-percentage" id="lowerRightPercentage">0%</span>
-                    </div>
+                <div class="form-actions">
+                    <button class="action-button primary" id="directSendButton">Send Payment</button>
                 </div>
             </div>
-            
-            <div class="brushing-history">
-                <h3>Brushing History</h3>
-                <div id="brushingHistory"></div>
+        </div>
+    </div>
+    
+    <!-- Deposit Form -->
+    <div class="modal" id="depositContainer" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Deposit Funds</h3>
+                <button class="close-button" id="closeDeposit">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="depositAmount">Amount:</label>
+                    <div class="amount-input-container">
+                        <span class="currency-symbol">$</span>
+                        <input type="number" id="depositAmount" placeholder="0.00" step="0.01" min="0.01">
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button class="action-button primary" id="confirmDepositButton">Deposit</button>
+                </div>
+                <p class="deposit-note">Note: This is a demo feature. In a real system, this would connect to a payment processor.</p>
             </div>
         </div>
     </div>
