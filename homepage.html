@@ -2,38 +2,56 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Digital Wallet</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="style.css">
-    <!-- Add QR Code libraries -->
+    <link rel="stylesheet" href="wallet-style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- QR Code libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
-    <script type="module" src="./homepage.js"></script>
-    <script type="module" src="./wallet.js"></script>
+    <meta name="theme-color" content="#4f46e5">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 </head>
 <body>
     <div class="notification" id="notification" style="display: none;"></div>
     
     <header class="wallet-header">
-        <h1>Digital Wallet</h1>
+        <h1><i class="fas fa-wallet"></i> Digital Wallet</h1>
         <div class="user-info">
-            <span id="loggedUserFName"></span> <span id="loggedUserLName"></span>
-            <button id="logout" class="logout-button"><i class="fas fa-sign-out-alt"></i> Logout</button>
+            <span id="loggedUserName"></span>
+            <button id="logout" class="logout-button">
+                <i class="fas fa-sign-out-alt"></i>
+                <span class="logout-text">Logout</span>
+            </button>
         </div>
     </header>
     
     <main class="wallet-main">
+        <!-- Refresh indicator -->
+        <div class="pull-to-refresh" id="pullToRefresh" style="display: none;">
+            <div class="pull-indicator"></div>
+            <span>Refreshing...</span>
+        </div>
+        
         <section class="balance-section">
             <div class="card balance-card">
                 <div class="card-header">
                     <h2>Available Balance</h2>
                 </div>
                 <div class="card-body">
-                    <div class="balance-amount" id="balanceDisplay">$0.00</div>
+                    <div class="balance-amount" id="balanceDisplay">
+                        <div class="skeleton skeleton-text" id="balanceSkeleton"></div>
+                    </div>
                     <div class="account-info">
                         <div class="account-label">Account ID:</div>
-                        <div class="account-value" id="accountId">-</div>
+                        <div class="account-value" id="accountId">
+                            <div class="skeleton skeleton-text small" id="accountIdSkeleton"></div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -46,19 +64,19 @@
                 </div>
                 <div class="card-body">
                     <div class="action-buttons">
-                        <button class="action-button" id="generateQRButton">
+                        <button class="action-button" id="generateQRButton" aria-label="Receive Money">
                             <i class="fas fa-qrcode"></i>
-                            <span>Receive Money</span>
+                            <span>Receive</span>
                         </button>
-                        <button class="action-button" id="scanQRButton">
+                        <button class="action-button" id="scanQRButton" aria-label="Send with QR">
                             <i class="fas fa-camera"></i>
-                            <span>Send with QR</span>
+                            <span>QR Pay</span>
                         </button>
-                        <button class="action-button" id="sendDirectButton">
+                        <button class="action-button" id="sendDirectButton" aria-label="Send Direct">
                             <i class="fas fa-paper-plane"></i>
-                            <span>Send Direct</span>
+                            <span>Send</span>
                         </button>
-                        <button class="action-button" id="depositButton">
+                        <button class="action-button" id="depositButton" aria-label="Deposit">
                             <i class="fas fa-plus-circle"></i>
                             <span>Deposit</span>
                         </button>
@@ -73,48 +91,76 @@
                     <h2>Recent Transactions</h2>
                 </div>
                 <div class="card-body">
+                    <div class="filter-section" id="transactionFilter">
+                        <button class="filter-button active" data-filter="all">All</button>
+                        <button class="filter-button" data-filter="received">Received</button>
+                        <button class="filter-button" data-filter="sent">Sent</button>
+                        <button class="filter-button" data-filter="deposit">Deposits</button>
+                    </div>
                     <div class="transaction-list" id="transactionHistory">
-                        <p>Loading transactions...</p>
+                        <div id="transactionSkeleton">
+                            <div class="transaction-item">
+                                <div class="skeleton skeleton-text"></div>
+                                <div class="skeleton skeleton-text small"></div>
+                            </div>
+                            <div class="transaction-item">
+                                <div class="skeleton skeleton-text"></div>
+                                <div class="skeleton skeleton-text small"></div>
+                            </div>
+                            <div class="transaction-item">
+                                <div class="skeleton skeleton-text"></div>
+                                <div class="skeleton skeleton-text small"></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
     </main>
     
-    <!-- QR Code Section -->
+    <!-- QR Code Modal -->
     <div class="modal" id="qrSection" style="display: none;">
         <div class="modal-content">
             <div class="modal-header">
                 <h3>Your Payment QR Code</h3>
-                <button class="close-button" id="closeQRModal">&times;</button>
+                <button class="close-button" id="closeQRModal" aria-label="Close">&times;</button>
             </div>
             <div class="modal-body">
                 <div id="qrCodeDisplay" class="qr-code-container"></div>
                 <p class="qr-instructions">Scan this QR code to receive payment</p>
+                <div class="form-actions">
+                    <button class="action-button primary" id="shareQRButton">
+                        <i class="fas fa-share-alt"></i> Share QR Code
+                    </button>
+                </div>
             </div>
         </div>
     </div>
     
-    <!-- QR Scanner Section -->
+    <!-- QR Scanner Modal -->
     <div class="modal" id="qrScannerContainer" style="display: none;">
         <div class="modal-content">
             <div class="modal-header">
                 <h3>Scan QR Code</h3>
-                <button class="close-button" id="closeScanner">&times;</button>
+                <button class="close-button" id="closeScanner" aria-label="Close">&times;</button>
             </div>
             <div class="modal-body">
-                <div id="qrScanner"></div>
-                <div id="scanResult"></div>
+                <div id="qrScanner" class="qr-scanner-container"></div>
+                <div id="scanResult" class="scan-result"></div>
+                <p class="qr-instructions">Position the QR code within the frame</p>
+                <button id="toggleFlashlight" class="action-button" style="margin-top: 1rem;">
+                    <i class="fas fa-bolt"></i> Toggle Flashlight
+                </button>
             </div>
         </div>
     </div>
     
-    <!-- Payment Form -->
+    <!-- Payment Form Modal -->
     <div class="modal" id="paymentFormContainer" style="display: none;">
         <div class="modal-content">
             <div class="modal-header">
                 <h3>Send Payment</h3>
-                <button class="close-button" id="closePaymentForm">&times;</button>
+                <button class="close-button" id="closePaymentForm" aria-label="Close">&times;</button>
             </div>
             <div class="modal-body">
                 <div class="form-group">
@@ -126,63 +172,99 @@
                     <label for="amount">Amount:</label>
                     <div class="amount-input-container">
                         <span class="currency-symbol">$</span>
-                        <input type="number" id="amount" placeholder="0.00" step="0.01" min="0.01">
+                        <input type="number" id="amount" placeholder="0.00" step="0.01" min="0.01" inputmode="decimal">
                     </div>
                 </div>
+                <div class="form-group">
+                    <label for="paymentNote">Note (optional):</label>
+                    <input type="text" id="paymentNote" placeholder="What's this payment for?">
+                </div>
                 <div class="form-actions">
-                    <button class="action-button primary" id="sendButton">Send Payment</button>
+                    <button class="action-button primary" id="sendButton">
+                        <i class="fas fa-paper-plane"></i> Send Payment
+                    </button>
                 </div>
             </div>
         </div>
     </div>
     
-    <!-- Direct Send Form -->
+    <!-- Direct Send Form Modal -->
     <div class="modal" id="directSendContainer" style="display: none;">
         <div class="modal-content">
             <div class="modal-header">
                 <h3>Send Direct Payment</h3>
-                <button class="close-button" id="closeDirectSend">&times;</button>
+                <button class="close-button" id="closeDirectSend" aria-label="Close">&times;</button>
             </div>
             <div class="modal-body">
                 <div class="form-group">
                     <label for="directRecipient">Recipient ID:</label>
                     <input type="text" id="directRecipient" placeholder="Enter recipient ID">
+                    <small id="recipientLookupResult"></small>
                 </div>
                 <div class="form-group">
                     <label for="directAmount">Amount:</label>
                     <div class="amount-input-container">
                         <span class="currency-symbol">$</span>
-                        <input type="number" id="directAmount" placeholder="0.00" step="0.01" min="0.01">
+                        <input type="number" id="directAmount" placeholder="0.00" step="0.01" min="0.01" inputmode="decimal">
                     </div>
                 </div>
+                <div class="form-group">
+                    <label for="directNote">Note (optional):</label>
+                    <input type="text" id="directNote" placeholder="What's this payment for?">
+                </div>
                 <div class="form-actions">
-                    <button class="action-button primary" id="directSendButton">Send Payment</button>
+                    <button class="action-button primary" id="directSendButton">
+                        <i class="fas fa-paper-plane"></i> Send Payment
+                    </button>
                 </div>
             </div>
         </div>
     </div>
     
-    <!-- Deposit Form -->
+    <!-- Deposit Form Modal -->
     <div class="modal" id="depositContainer" style="display: none;">
         <div class="modal-content">
             <div class="modal-header">
                 <h3>Deposit Funds</h3>
-                <button class="close-button" id="closeDeposit">&times;</button>
+                <button class="close-button" id="closeDeposit" aria-label="Close">&times;</button>
             </div>
             <div class="modal-body">
                 <div class="form-group">
                     <label for="depositAmount">Amount:</label>
                     <div class="amount-input-container">
                         <span class="currency-symbol">$</span>
-                        <input type="number" id="depositAmount" placeholder="0.00" step="0.01" min="0.01">
+                        <input type="number" id="depositAmount" placeholder="0.00" step="0.01" min="0.01" inputmode="decimal">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Deposit Method:</label>
+                    <div class="payment-methods">
+                        <div class="payment-method">
+                            <input type="radio" id="cardMethod" name="depositMethod" value="card" checked>
+                            <label for="cardMethod">
+                                <i class="fas fa-credit-card"></i> Credit/Debit Card
+                            </label>
+                        </div>
+                        <div class="payment-method">
+                            <input type="radio" id="bankMethod" name="depositMethod" value="bank">
+                            <label for="bankMethod">
+                                <i class="fas fa-university"></i> Bank Transfer
+                            </label>
+                        </div>
                     </div>
                 </div>
                 <div class="form-actions">
-                    <button class="action-button primary" id="confirmDepositButton">Deposit</button>
+                    <button class="action-button primary" id="confirmDepositButton">
+                        <i class="fas fa-plus-circle"></i> Deposit
+                    </button>
                 </div>
                 <p class="deposit-note">Note: This is a demo feature. In a real system, this would connect to a payment processor.</p>
             </div>
         </div>
     </div>
-</body>
-</html>
+    
+    <!-- Transaction Details Modal -->
+    <div class="modal" id="transactionDetailsModal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h
